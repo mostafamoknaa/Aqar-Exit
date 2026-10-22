@@ -24,8 +24,8 @@ class DatabaseSeeder extends Seeder
         Permission::syncFromConfig();
 
         // Branding/settings — editable later at Admin → Settings
-        Setting::put('site_name', 'Aqar Exit');
-        Setting::put('site_name_ar', 'عقار إكزت');
+        Setting::put('site_name', 'Mostafa Aqar');
+        Setting::put('site_name_ar', 'مصطفى عقار');
         Setting::put('support_email', 'info@aqarexit.test');
         Setting::put('support_phone', '+201018595959');
         Setting::put('buyer_commission_rate', 0.0125, 'float', 'financial');
