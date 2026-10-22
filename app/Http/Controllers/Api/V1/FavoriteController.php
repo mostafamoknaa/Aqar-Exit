@@ -14,7 +14,7 @@ class FavoriteController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         return ListingResource::collection(
-            $request->user()->favoriteListings()->published()->with(['images', 'project', 'developer'])->latest('favorites.created_at')->paginate(15)
+            $request->user()->favoriteListings()->published()->with(['images', 'category', 'project', 'developer'])->latest('favorites.created_at')->paginate(15)
         );
     }
 

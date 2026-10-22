@@ -25,4 +25,16 @@ class InterestController extends Controller
 
         return back()->with('success', 'Interest updated.');
     }
+
+    /** Staff reply inside the inquiry thread (buyer + seller get it in the app). */
+    public function reply(Request $request, Interest $interest): RedirectResponse
+    {
+        $validated = $request->validate(['body' => ['required', 'string', 'max:2000']]);
+        $interest->messages()->create(['sender_id' => $request->user()->id, 'sender_role' => 'staff', 'body' => $validated['body']]);
+        if ($interest->status === 'new') {
+            $interest->update(['status' => 'contacted']);
+        }
+
+        return back()->with('success', 'Reply sent.');
+    }
 }

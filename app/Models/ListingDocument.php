@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['listing_id', 'uploaded_by', 'type', 'original_name', 'path', 'status', 'review_notes', 'reviewed_by', 'reviewed_at'])]
 class ListingDocument extends Model
@@ -27,5 +28,10 @@ class ListingDocument extends Model
     public function reviewer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(DocumentReview::class)->latest();
     }
 }

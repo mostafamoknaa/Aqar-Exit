@@ -1,0 +1,87 @@
+openapi: 3.0.3
+info:
+  title: Aqar Exit Mobile API
+  version: 1.0.0
+  description: |
+    Installment-assignment platform API for Flutter (Android/iOS).
+    Auth: Sanctum bearer token. All money values are decimal EGP.
+    financial_status on listings is unverified|verified|discrepancy and never implies legal verification.
+servers:
+  - url: http://localhost:8000/api/v1
+components:
+  securitySchemes:
+    bearerAuth: { type: http, scheme: bearer }
+  schemas:
+    Listing:
+      type: object
+      properties:
+        id: { type: integer }
+        reference: { type: string, example: AQX-AB12CD34 }
+        title: { type: string }
+        unit_type: { type: string, example: apartment }
+        city: { type: string }
+        governorate: { type: string, nullable: true }
+        total_price: { type: number }
+        paid_amount: { type: number, description: Cash buyer pays seller }
+        cash_required: { type: number }
+        remaining_amount: { type: number }
+        estimated_total_cost: { type: number }
+        financial_status: { type: string, enum: [unverified, verified, discrepancy] }
+        status: { type: string }
+paths:
+  /branding:
+    get: { summary: Site name, logo, support contacts (Admin > Settings), responses: { '200': { description: OK } } }
+  /auth/register:
+    post: { summary: Register (phone + password), responses: { '201': { description: Token + user }, '422': { description: Validation } } }
+  /auth/login:
+    post: { summary: Login with phone or email (rate limited), responses: { '200': { description: Token + user } } }
+  /auth/forgot-password:
+    post: { summary: Request password reset (generic response), responses: { '200': { description: OK } } }
+  /auth/reset-password:
+    post: { summary: Reset password with broker token, responses: { '200': { description: OK } } }
+  /home:
+    get: { summary: Home stats, featured listings, developers, responses: { '200': { description: OK } } }
+  /listings:
+    get:
+      summary: Search listings
+      parameters:
+        - { name: city, in: query, schema: { type: string } }
+        - { name: governorate, in: query, schema: { type: string } }
+        - { name: category_id, in: query, schema: { type: integer } }
+        - { name: unit_type, in: query, schema: { type: string } }
+        - { name: max_paid, in: query, schema: { type: number } }
+        - { name: sort, in: query, schema: { type: string, enum: [cash_low, saving_high] } }
+      responses: { '200': { description: Paginated listings } }
+  /listings/{id}:
+    get: { summary: Public listing detail (private fields excluded), parameters: [{ name: id, in: path, required: true, schema: { type: integer } }], responses: { '200': { description: OK }, '404': { description: Not published } } }
+  /categories:
+    get: { summary: Configurable property categories, responses: { '200': { description: OK } } }
+  /locations:
+    get: { summary: Location tree (country > governorate > city > district), responses: { '200': { description: OK } } }
+  /evaluations/calculate:
+    post: { summary: Free exit calculator (cancel vs assignment), responses: { '200': { description: Calculation } } }
+  /my-listings:
+    get: { summary: My listings (seller), security: [{ bearerAuth: [] }], responses: { '200': { description: OK } } }
+    post: { summary: Create listing (draft or submit), security: [{ bearerAuth: [] }], responses: { '201': { description: Created } } }
+  /my-listings/{id}/documents:
+    post: { summary: Upload private document (pdf/image, max 10MB), security: [{ bearerAuth: [] }], parameters: [{ name: id, in: path, required: true, schema: { type: integer } }], responses: { '201': { description: Stored privately } } }
+  /my-listings/{listing}/documents/{document}/download:
+    get: { summary: Private download (owner/staff only), security: [{ bearerAuth: [] }], parameters: [{ name: listing, in: path, required: true, schema: { type: integer } }, { name: document, in: path, required: true, schema: { type: integer } }], responses: { '200': { description: File }, '403': { description: Forbidden } } }
+  /saved-searches:
+    get: { summary: My saved searches, security: [{ bearerAuth: [] }], responses: { '200': { description: OK } } }
+    post: { summary: Create saved search (criteria match Listing filters, notify_on_match), security: [{ bearerAuth: [] }], responses: { '201': { description: Created } } }
+  /deals:
+    get: { summary: My assignment cases with stage progress + events, security: [{ bearerAuth: [] }], responses: { '200': { description: OK } } }
+  /notifications:
+    get: { summary: In-app notifications + unread_count, security: [{ bearerAuth: [] }], responses: { '200': { description: OK } } }
+  /auth/otp/send:
+    post: { summary: Send phone OTP (hashed, 10min expiry, cooldown, rate limited; code never returned), responses: { '200': { description: Generic OK } } }
+  /auth/otp/login:
+    post: { summary: OTP login for existing users (single-use code), responses: { '200': { description: Token + user }, '422': { description: Invalid/expired code } } }
+  /listings/map:
+    get: { summary: Map pins for geocoded published listings (viewport bounds optional), responses: { '200': { description: Pins } } }
+  /notifications/preferences:
+    get: { summary: Notification preferences + locale, security: [{ bearerAuth: [] }], responses: { '200': { description: OK } } }
+    put: { summary: Update notification preferences, security: [{ bearerAuth: [] }], responses: { '200': { description: OK } } }
+  /notifications/register-device:
+    post: { summary: Register FCM token + locale, security: [{ bearerAuth: [] }], responses: { '200': { description: OK } } }

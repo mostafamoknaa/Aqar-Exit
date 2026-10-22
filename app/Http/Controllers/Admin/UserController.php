@@ -29,6 +29,7 @@ class UserController extends Controller
 
     public function toggleActive(User $user): RedirectResponse
     {
+        abort_unless(auth()->user()->can('users.manage'), 403);
         abort_if($user->id === auth()->id(), 422, 'You cannot disable yourself.');
         $user->update(['is_active' => ! $user->is_active]);
         $user->tokens()->delete();
@@ -38,6 +39,7 @@ class UserController extends Controller
 
     public function updateRole(Request $request, User $user): RedirectResponse
     {
+        abort_unless($request->user()->can('users.manage'), 403);
         $request->validate(['role' => ['required', 'in:admin,manager,user']]);
         $user->update(['role' => $request->input('role')]);
 

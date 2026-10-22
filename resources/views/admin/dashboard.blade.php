@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 @section('title', 'Dashboard')
 @section('content')
 @php $fmt = fn($n) => number_format($n); $egp = fn($n) => number_format($n).' EGP'; @endphp
@@ -22,20 +22,20 @@
 
 <div class="grid gap-6 xl:grid-cols-3">
     <div class="card xl:col-span-2">
-        <div class="flex items-center justify-between border-b border-gray-100 px-5 py-4"><h2 class="font-bold">Verification Queue</h2><a class="text-sm font-semibold text-brand-700" href="{{ route('admin.listings.index', ['status'=>'pending_review']) }}">View all →</a></div>
+        <div class="flex items-center justify-between border-b border-gray-100 px-5 py-4"><h2 class="font-bold">{{ __('admin.verification_queue') }}</h2><a class="text-sm font-semibold text-brand-700" href="{{ route('admin.listings.index', ['status'=>'pending_review']) }}">View all →</a></div>
         <div class="overflow-x-auto"><table class="w-full min-w-[520px]">
-            <thead><tr class="border-b border-gray-100 text-start"><th class="th">Listing</th><th class="th">Seller</th><th class="th">Cash Paid</th><th class="th"></th></tr></thead>
+            <thead><tr class="border-b border-gray-100 text-start"><th class="th">{{ __('admin.listing') }}</th><th class="th">{{ __('admin.seller') }}</th><th class="th">{{ __('admin.cash_paid') }}</th><th class="th"></th></tr></thead>
             <tbody>
             @forelse ($pendingListings as $listing)
                 <tr class="border-b border-gray-50 hover:bg-gray-50"><td class="td"><p class="font-semibold">{{ $listing->title }}</p><p class="text-xs text-ink-500">{{ $listing->project?->name }} · {{ $listing->city }}</p></td>
                 <td class="td">{{ $listing->seller->name }}</td><td class="td font-semibold">{{ $egp($listing->paid_amount) }}</td>
-                <td class="td text-end"><a class="btn-primary" href="{{ route('admin.listings.show', $listing) }}">Review</a></td></tr>
-            @empty <tr><td class="td" colspan="4">No listings waiting for review 🎉</td></tr> @endforelse
+                <td class="td text-end"><a class="btn-primary" href="{{ route('admin.listings.show', $listing) }}">{{ __('admin.review') }}</a></td></tr>
+            @empty <tr><td class="td" colspan="4">{{ __('admin.no_pending') }} 🎉</td></tr> @endforelse
             </tbody></table></div>
     </div>
 
     <div class="card">
-        <div class="border-b border-gray-100 px-5 py-4"><h2 class="font-bold">Deals by Stage</h2></div>
+        <div class="border-b border-gray-100 px-5 py-4"><h2 class="font-bold">{{ __('admin.deals_by_stage') }}</h2></div>
         <div class="flex flex-col gap-3 p-5">
             @foreach (\App\Enums\DealStage::cases() as $stage)
                 @php $total = $dealsByStage[$stage->value] ?? 0; @endphp
@@ -48,7 +48,7 @@
 
 <div class="grid gap-6 xl:grid-cols-2">
     <div class="card">
-        <div class="border-b border-gray-100 px-5 py-4"><h2 class="font-bold">Recent Deals</h2></div>
+        <div class="border-b border-gray-100 px-5 py-4"><h2 class="font-bold">{{ __('admin.recent_deals') }}</h2></div>
         <div class="flex flex-col divide-y divide-gray-50">
             @forelse ($recentDeals as $deal)
                 <a href="{{ route('admin.deals.show', $deal) }}" class="flex items-center justify-between gap-3 px-5 py-3 hover:bg-gray-50">
@@ -58,7 +58,7 @@
         </div>
     </div>
     <div class="card">
-        <div class="border-b border-gray-100 px-5 py-4"><h2 class="font-bold">Latest Exit Evaluations</h2></div>
+        <div class="border-b border-gray-100 px-5 py-4"><h2 class="font-bold">{{ __('admin.latest_evaluations') }}</h2></div>
         <div class="flex flex-col divide-y divide-gray-50">
             @forelse ($recentEvaluations as $ev)
                 <a href="{{ route('admin.evaluations.show', $ev) }}" class="flex items-center justify-between gap-3 px-5 py-3 hover:bg-gray-50">

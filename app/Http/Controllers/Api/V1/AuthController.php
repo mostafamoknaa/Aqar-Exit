@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\LoginRequest;
 use App\Http\Requests\Api\V1\RegisterRequest;
 use App\Http\Resources\V1\UserResource;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,6 +17,7 @@ class AuthController extends Controller
 {
     public function register(RegisterRequest $request): JsonResponse
     {
+        abort_unless(Setting::get('registration_enabled', true), 403, 'Registration is currently disabled.');
         $user = User::create($request->safe()->except('device_name'));
         $token = $user->createToken($request->input('device_name', 'mobile'))->plainTextToken;
 

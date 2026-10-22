@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\V1;
 
+use App\Services\CaseWorkflow;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -12,7 +13,17 @@ class ListingResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'reference' => $this->reference,
             'title' => $this->title,
+            'description' => $this->description,
+            'governorate' => $this->governorate,
+            'category' => $this->whenLoaded('category', fn () => $this->category ? ['id' => $this->category->id, 'name' => $this->category->localizedName(), 'icon' => $this->category->icon] : null),
+            'latitude' => $this->latitude ? (float) $this->latitude : null,
+            'longitude' => $this->longitude ? (float) $this->longitude : null,
+            'finishing_status' => $this->finishing_status,
+            'amenities' => $this->amenities ?? [],
+            'financial_status' => $this->financial_status, // unverified|verified|discrepancy — never claim legal verification
+            'estimated_total_cost' => (float) $this->estimatedTotalCost(),
             'unit_type' => $this->unit_type?->value,
             'unit_type_label' => $this->unit_type?->label(),
             'city' => $this->city,
@@ -22,18 +33,20 @@ class ListingResource extends JsonResource
             'bathrooms' => $this->bathrooms,
             'floor' => $this->floor,
             // Money block the mobile app renders as "cash to seller / total / remaining"
-            'total_price' => (int) $this->total_price,
-            'paid_amount' => (int) $this->paid_amount,
-            'cash_required' => (int) $this->paid_amount,
-            'remaining_amount' => (int) $this->remaining_amount,
-            'market_price' => $this->market_price ? (int) $this->market_price : null,
+            'total_price' => (float) $this->total_price,
+            'paid_amount' => (float) $this->paid_amount,
+            'cash_required' => (float) $this->paid_amount,
+            'remaining_amount' => (float) $this->remaining_amount,
+            'market_price' => $this->market_price ? (float) $this->market_price : null,
             'saving_vs_market' => $this->saving_vs_market,
-            'installment_amount' => $this->installment_amount ? (int) $this->installment_amount : null,
+            'installment_amount' => $this->installment_amount ? (float) $this->installment_amount : null,
             'installments_remaining' => $this->installments_remaining,
             'delivery_date' => $this->delivery_date?->toDateString(),
             'is_featured' => $this->is_featured,
             'is_silent' => $this->is_silent,
             'status' => $this->status?->value,
+            'case_step' => CaseWorkflow::currentStep($this->status->value, null),
+            'case_workflow' => CaseWorkflow::STEPS,
             'cover_image' => $this->whenLoaded('images', fn () => $this->images->firstWhere('is_cover', true)?->url ?? $this->images->first()?->url),
             'images' => $this->whenLoaded('images', fn () => $this->images->map(fn ($i) => $i->url)->values()),
             'developer' => new DeveloperResource($this->whenLoaded('developer')),

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'listing_id', 'seller_id', 'buyer_id', 'case_manager_id', 'interest_id', 'stage',
@@ -30,10 +31,16 @@ class Deal extends Model
         ];
     }
 
+    public function events(): HasMany
+    {
+        return $this->hasMany(DealEvent::class)->latest();
+    }
+
     protected static function booted(): void
     {
         static::saving(function (Deal $deal) {
-            $deal->commission_amount = (int) round((int) $deal->total_price * (float) $deal->commission_rate);
+            // Decimal money via bcmath — never float arithmetic for money.
+            $deal->commission_amount = bcmul((string) $deal->total_price, (string) $deal->commission_rate, 2);
             if ($deal->stage === DealStage::Completed && ! $deal->completed_at) {
                 $deal->completed_at = now();
             }

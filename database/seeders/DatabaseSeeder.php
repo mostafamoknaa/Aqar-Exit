@@ -8,7 +8,11 @@ use App\Models\Developer;
 use App\Models\Evaluation;
 use App\Models\Interest;
 use App\Models\Listing;
+use App\Models\Location;
+use App\Models\Permission;
 use App\Models\Project;
+use App\Models\PropertyCategory;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
@@ -17,6 +21,24 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        Permission::syncFromConfig();
+
+        // Branding/settings — editable later at Admin → Settings
+        Setting::put('site_name', 'Aqar Exit');
+        Setting::put('site_name_ar', 'عقار إكزت');
+        Setting::put('support_email', 'info@aqarexit.test');
+        Setting::put('support_phone', '+201018595959');
+        Setting::put('buyer_commission_rate', 0.0125, 'float', 'financial');
+        Setting::put('default_cancellation_percent', 15, 'float', 'financial');
+
+        foreach ([['Residential', 'سكني', 'building', 1], ['Commercial', 'تجاري', 'building-office', 2], ['Coastal', 'ساحلي', 'home', 3], ['Administrative', 'إداري', 'building-office', 4]] as [$n, $ar, $icon, $sort]) {
+            PropertyCategory::firstOrCreate(['slug' => Str::slug($n)], ['name' => $n, 'name_ar' => $ar, 'icon' => $icon, 'sort_order' => $sort]);
+        }
+        $egypt = Location::firstOrCreate(['slug' => 'egypt'], ['type' => 'country', 'name' => 'Egypt', 'name_ar' => 'مصر']);
+        foreach ([['Cairo', 'القاهرة'], ['Giza', 'الجيزة'], ['North Coast', 'الساحل الشمالي']] as [$n, $ar]) {
+            Location::firstOrCreate(['slug' => Str::slug($n)], ['parent_id' => $egypt->id, 'type' => 'governorate', 'name' => $n, 'name_ar' => $ar]);
+        }
+
         // Staff — login at /admin/login
         $admin = User::factory()->create(['name' => 'Aqar Admin', 'email' => 'admin@aqarexit.test', 'phone' => '01000000001', 'role' => UserRole::Admin]);
         $manager = User::factory()->create(['name' => 'Case Manager', 'email' => 'manager@aqarexit.test', 'phone' => '01000000002', 'role' => UserRole::Manager]);

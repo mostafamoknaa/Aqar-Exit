@@ -22,10 +22,10 @@ class HomeController extends Controller
                 'cities' => (clone $published)->distinct()->count('city'),
             ],
             'featured_listings' => ListingResource::collection(
-                (clone $published)->with(['images', 'project.developer', 'developer'])->where('is_featured', true)->latest('published_at')->limit(10)->get()
+                (clone $published)->with(['images', 'category', 'project.developer', 'developer'])->where('is_featured', true)->latest('published_at')->limit(10)->get()
             ),
             'latest_listings' => ListingResource::collection(
-                (clone $published)->with(['images', 'project.developer', 'developer'])->latest('published_at')->limit(10)->get()
+                (clone $published)->with(['images', 'category', 'project.developer', 'developer'])->latest('published_at')->limit(10)->get()
             ),
             'developers' => DeveloperResource::collection(
                 Developer::where('is_active', true)->withCount(['listings' => fn ($q) => $q->published()])->limit(12)->get()

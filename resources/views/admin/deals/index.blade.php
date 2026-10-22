@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 @section('title', 'Deals / Assignment Cases')
 @section('content')
 {{-- Kanban pipeline --}}
@@ -20,12 +20,12 @@
 </div>
 
 <form method="GET" class="card flex flex-wrap items-end gap-3 p-4">
-    <div><label class="label">Stage</label><select name="stage" class="input"><option value="">All</option>@foreach($stages as $s)<option value="{{ $s->value }}" @selected(request('stage')===$s->value)>{{ $s->label() }}</option>@endforeach</select></div>
-    <div><label class="label">Case Manager</label><select name="case_manager_id" class="input"><option value="">All</option>@foreach($managers as $m)<option value="{{ $m->id }}" @selected(request('case_manager_id')==$m->id)>{{ $m->name }}</option>@endforeach</select></div>
-    <button class="btn-primary">Filter</button>
+    <div><label class="label">{{ __('admin.stage') }}</label><select name="stage" class="input"><option value="">All</option>@foreach($stages as $s)<option value="{{ $s->value }}" @selected(request('stage')===$s->value)>{{ $s->label() }}</option>@endforeach</select></div>
+    <div><label class="label">{{ __('admin.case_manager') }}</label><select name="case_manager_id" class="input"><option value="">All</option>@foreach($managers as $m)<option value="{{ $m->id }}" @selected(request('case_manager_id')==$m->id)>{{ $m->name }}</option>@endforeach</select></div>
+    <button class="btn-primary">{{ __('admin.filter') }}</button>
 </form>
 
-<div class="card overflow-x-auto"><table class="w-full min-w-[760px]"><thead><tr><th class="th">#</th><th class="th">Listing</th><th class="th">Buyer → Seller</th><th class="th">Cash / Commission</th><th class="th">Stage</th><th class="th">Manager</th><th class="th"></th></tr></thead><tbody>
+<div class="card overflow-x-auto"><table class="w-full min-w-[760px]"><thead><tr><th class="th">#</th><th class="th">{{ __('admin.listing') }}</th><th class="th">Buyer → Seller</th><th class="th">{{ __('admin.cash_commission') }}</th><th class="th">{{ __('admin.stage') }}</th><th class="th">{{ __('admin.manager') }}</th><th class="th"></th></tr></thead><tbody>
 @forelse($deals as $deal)
 <tr class="border-b border-gray-50 hover:bg-gray-50"><td class="td">{{ $deal->id }}</td>
 <td class="td font-semibold">{{ $deal->listing->title }}</td>
@@ -33,7 +33,7 @@
 <td class="td">{{ number_format($deal->cash_to_seller) }} / <span class="text-emerald-600">{{ number_format($deal->commission_amount) }} EGP</span></td>
 <td class="td"><span class="badge bg-sky-100 text-sky-800">{{ $deal->stage->label() }}</span></td>
 <td class="td">{{ $deal->caseManager?->name ?? '—' }}</td>
-<td class="td text-end"><a class="btn-secondary" href="{{ route('admin.deals.show', $deal) }}">Manage</a></td></tr>
+<td class="td text-end"><a class="btn-secondary" href="{{ route('admin.deals.show', $deal) }}">{{ __('admin.manage') }}</a></td></tr>
 @empty <tr><td class="td" colspan="7">No deals.</td></tr> @endforelse
 </tbody></table></div>
 {{ $deals->links() }}

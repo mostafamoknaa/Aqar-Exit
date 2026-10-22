@@ -14,7 +14,7 @@ class DealController extends Controller
     public function index(Request $request): AnonymousResourceCollection
     {
         $deals = Deal::where(fn ($q) => $q->where('buyer_id', $request->user()->id)->orWhere('seller_id', $request->user()->id))
-            ->with(['listing.images', 'listing.project', 'seller', 'buyer', 'caseManager'])
+            ->with(['listing.images', 'listing.category', 'listing.project', 'seller', 'buyer', 'caseManager', 'events.actor'])
             ->latest()
             ->paginate(15);
 
@@ -25,6 +25,6 @@ class DealController extends Controller
     {
         abort_unless(in_array($request->user()->id, [$deal->buyer_id, $deal->seller_id], true), 403);
 
-        return new DealResource($deal->load(['listing.images', 'listing.project', 'seller', 'buyer', 'caseManager']));
+        return new DealResource($deal->load(['listing.images', 'listing.category', 'listing.project', 'seller', 'buyer', 'caseManager', 'events.actor']));
     }
 }

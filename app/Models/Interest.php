@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 #[Fillable(['listing_id', 'buyer_id', 'message', 'cash_available', 'status', 'admin_notes'])]
@@ -28,5 +29,10 @@ class Interest extends Model
     public function deal(): HasOne
     {
         return $this->hasOne(Deal::class);
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(InterestMessage::class)->oldest();
     }
 }

@@ -13,7 +13,7 @@ class InterestResource extends JsonResource
             'id' => $this->id,
             'status' => $this->status,
             'message' => $this->message,
-            'cash_available' => $this->cash_available ? (int) $this->cash_available : null,
+            'cash_available' => $this->cash_available ? (float) $this->cash_available : null,
             'listing' => new ListingResource($this->whenLoaded('listing')),
             'buyer' => $this->whenLoaded('buyer', fn () => ['id' => $this->buyer->id, 'name' => $this->buyer->name]),
             'created_at' => $this->created_at?->toISOString(),
