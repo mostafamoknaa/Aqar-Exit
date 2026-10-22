@@ -1,0 +1,34 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Aqar Exit brand */
+    --color-brand-50: oklch(0.97 0.02 165);
+    --color-brand-100: oklch(0.93 0.05 165);
+    --color-brand-500: oklch(0.62 0.14 165);
+    --color-brand-600: oklch(0.54 0.13 165);
+    --color-brand-700: oklch(0.46 0.11 165);
+    --color-brand-900: oklch(0.28 0.06 165);
+    --color-ink-900: oklch(0.21 0.02 260);
+    --color-ink-700: oklch(0.37 0.02 260);
+    --color-ink-500: oklch(0.55 0.02 260);
+}
+
+@layer components {
+    .btn-primary { @apply inline-flex items-center justify-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:opacity-50; }
+    .btn-secondary { @apply inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-ink-700 transition hover:bg-gray-50; }
+    .btn-danger { @apply inline-flex items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700; }
+    .input { @apply w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-ink-900 placeholder-ink-500 focus:border-brand-500 focus:ring-2 focus:ring-brand-100 focus:outline-none; }
+    .label { @apply mb-1 block text-sm font-medium text-ink-700; }
+    .card { @apply rounded-xl border border-gray-200 bg-white shadow-sm; }
+    .th { @apply px-4 py-3 text-start text-xs font-semibold tracking-wide text-ink-500 uppercase; }
+    .td { @apply px-4 py-3 text-sm text-ink-700; }
+    .badge { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold; }
+    .nav-link { @apply flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-300 transition hover:bg-white/10 hover:text-white; }
+    .nav-link-active { @apply bg-brand-600 text-white hover:bg-brand-600; }
+}
